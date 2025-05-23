@@ -8,8 +8,8 @@ public class Cliente {
     private String domicilio;
     private String comuna;
     long telefono;
-    static long numeroCuentaCorriente;
-    static int saldoCuentaCorriente;
+    private Cuenta cuenta;
+
 
 
     public Cliente() {
@@ -69,46 +69,78 @@ public class Cliente {
     public void setTelefono(long telefono) {
         this.telefono = telefono;
     }
-
+    public Cliente(Cuenta cuenta) {
+        this.cuenta = cuenta;
+    }
+    public Cuenta getCuenta() {
+        return cuenta;
+    }
+    public void setCuenta(Cuenta cuenta) {
+        this.cuenta = cuenta;
+    }
 
     public static void registroCliente(Cliente cliente){
         Scanner scanner= new Scanner(System.in);
 
         System.out.println("Ingresa tu rut con puntos y guion");
-        cliente.setRut(Cliente.rut(scanner.nextLine()));
+        String accesoRut= scanner.nextLine();
 
-        System.out.println("Ingresa tu Nombre");
-        cliente.setNombre(scanner.nextLine());
-        System.out.println("Ingresa tu Apellido Paterno");
-        cliente.setApellidoPaterno(scanner.nextLine());
-        System.out.println("Ingresa tu Apellido Materno");
-        cliente.setApellidoMaterno(scanner.nextLine());
-        System.out.println("Ingresa tu Domicilio");
-        cliente.setDomicilio(scanner.nextLine());
-        System.out.println("Ingresa tu Comuna");
-        cliente.setComuna(scanner.nextLine());
-        cliente.setTelefono(Cliente.telefono());
+        if(Administracion.clienteRegistradoPorRut.containsKey(accesoRut)){
+            System.out.println("Este cliente ya ha sido ingresado");
+
+        }else{
+            cliente.setRut(Cliente.rut(accesoRut));
+            System.out.println("Ingresa tu Nombre");
+            cliente.setNombre(scanner.nextLine());
+            System.out.println("Ingresa tu Apellido Paterno");
+            cliente.setApellidoPaterno(scanner.nextLine());
+            System.out.println("Ingresa tu Apellido Materno");
+            cliente.setApellidoMaterno(scanner.nextLine());
+            System.out.println("Ingresa tu Domicilio");
+            cliente.setDomicilio(scanner.nextLine());
+            System.out.println("Ingresa tu Comuna");
+            cliente.setComuna(scanner.nextLine());
+            cliente.setTelefono(Cliente.telefono());
+
+            System.out.println(cliente);
+            Administracion.listaCliente.add(cliente);
+
+            System.out.println();
+            System.out.println("Cliente ingresado correctamente");
+            System.out.println("Bienvenido a Bank Boston " + cliente.getNombre());
+            System.out.println();
+
+            long numeroCuentaCorriente = Cuenta.numeroAleatorioCuentaCorriente() +110000000;
+            int saldoInicialCuentaCorriente = 0;
+
+            Cuenta cuenta = new Cuenta(numeroCuentaCorriente, saldoInicialCuentaCorriente);
+            cliente.setCuenta(cuenta);
+            Administracion.clienteRegistradoPorRut.put(cliente.getRut(), cliente);
+            Administracion.cuentaRegistadaPorRut.put(cliente.getRut(), cuenta);
 
 
-
-        //System.out.println(cliente);
-        Administracion.listaCliente.add(cliente);
-
-        System.out.println();
-        System.out.println("Cliente ingresado correctamente");
-        System.out.println("Bienvenido a Bank Boston " + cliente.getNombre());
-        System.out.println();
-
-        Cuenta.creacionCuentaCorriente();
-
-        Cuenta cuenta= new Cuenta(Cuenta.numeroCuentaCorriente, Cuenta.saldoCuentaCorriente);
-
-
+        }
     }
 
     public static void impresionDatosCliente(Cliente cliente, Cuenta cuenta){
-        System.out.println(cliente);
-        System.out.println(cuenta);
+        Scanner scanner= new Scanner(System.in);
+
+        if(Administracion.clienteRegistradoPorRut.isEmpty()){
+            System.out.println("Es necesario registrarte como cliente");
+        }else{
+            System.out.println("Ingresa tu rut:");
+            String rut = scanner.nextLine();
+
+            if(Administracion.clienteRegistradoPorRut.containsKey(rut)){
+                System.out.println(Administracion.clienteRegistradoPorRut.get(rut));
+                System.out.println();
+                System.out.println(Administracion.cuentaRegistadaPorRut.get(rut));
+
+
+            }else{
+                System.out.println("Rut ingresado incorrecto o no registrado");
+            }
+        }
     }
 
     public static long telefono(){
