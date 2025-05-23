@@ -1,8 +1,11 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Administracion {
     static ArrayList <Cliente> listaCliente = new ArrayList<>();
+    static HashMap <String, Object> clienteRegistradoPorRut = new HashMap<>();
+    static HashMap <String, Object> cuentaRegistadaPorRut = new HashMap<>();
 
 
     public static void Bienvenida(){
