@@ -1,8 +1,8 @@
 import java.util.Scanner;
 
 public class Cuenta {
-    static long numeroCuentaCorriente;
-    static int saldoCuentaCorriente;
+    long numeroCuentaCorriente;
+    int saldoCuentaCorriente;
 
     public Cuenta(){}
 
@@ -11,56 +11,66 @@ public class Cuenta {
         this.saldoCuentaCorriente = saldo;
     }
 
-    public static void depositar(){
-        if(Administracion.listaCliente.size()==0){
-            System.out.println("Primero debes ser cliente de Bank Boston");
-        }else{
-            System.out.println("Ingresa el valor que deseas depositar");
+    public long getNumeroCuentaCorriente() {
+        return numeroCuentaCorriente;
+    }
+    public void setNumeroCuentaCorriente(long numeroCuentaCorriente) {
+        this.numeroCuentaCorriente = numeroCuentaCorriente;
+    }
+    public int getSaldoCuentaCorriente() {
+        return saldoCuentaCorriente;
+    }
+    public void setSaldoCuentaCorriente(int saldoCuentaCorriente) {
+        this.saldoCuentaCorriente = saldoCuentaCorriente;
+    }
+
+    public void depositar(String rut){
+        if(Administracion.clienteRegistradoPorRut.containsKey(rut)) {
+            Cliente clienteBuscado = (Cliente) Administracion.clienteRegistradoPorRut.get(rut);
+            Cuenta cuentaBuscada = clienteBuscado.getCuenta();
+
             Scanner scanner = new Scanner(System.in);
+
+            System.out.println("Ingresa el monto que deseas depositar");
             int deposito = scanner.nextInt();
-
-
-            if(deposito <= 0){
-                System.out.println("Deposito invalido");
+            if(deposito <=0){
+                System.out.println("El valor ingresado es incorrecto");
             }else{
-                saldoCuentaCorriente = saldoCuentaCorriente + deposito;
-                System.out.println("¡Depósito realizado de manera exitosa!");
-                System.out.println("Tu nuevo saldo es:");
-                System.out.println("$" + saldoCuentaCorriente + " CLP");
+                cuentaBuscada.setSaldoCuentaCorriente(cuentaBuscada.getSaldoCuentaCorriente()+ deposito);
+                System.out.println("Saldo actual: $" + cuentaBuscada.getSaldoCuentaCorriente() + " CLP");
             }
-
         }
     }
 
-    public static void giro() {
-        if (Administracion.listaCliente.size() == 0) {
-            System.out.println("Primero debes ser cliente de Bank Boston");
-        }else{
+    public void girar(String rut){
+        if(Administracion.clienteRegistradoPorRut.containsKey(rut)){
+            Cliente clienteBuscado = (Cliente) Administracion.clienteRegistradoPorRut.get(rut);
+            Cuenta cuentaBuscada = clienteBuscado.getCuenta();
+
             Scanner scanner = new Scanner(System.in);
 
-            System.out.println("Ingresa el valor que deseas girar");
+            System.out.println("Ingresa el monto que deseas retirar");
             int giro= scanner.nextInt();
 
-            if(saldoCuentaCorriente==0){
-                System.out.println("No puedes realizar un Giro, no posees dinero en tu cuenta");
-            } else if (giro> saldoCuentaCorriente) {
-                System.out.println("El Giro que deseas realizar excede tu saldo actual");
-            }else if(giro <=0) {
-                System.out.println("Acciòn invalida");
+            if(giro > clienteBuscado.getCuenta().getSaldoCuentaCorriente()){
+                System.out.println("El monto ingresado excede tu saldo actual");
+            } else if(giro<=0) {
+                System.out.println("Valor ingresado invalido");
             }else{
-                System.out.println("Ingresa el valor que deseas Girar");
-                saldoCuentaCorriente = saldoCuentaCorriente - giro;
-                System.out.println("Tu nuevo saldo es:");
-                System.out.println("$" + saldoCuentaCorriente + " CLP");
+                cuentaBuscada.setSaldoCuentaCorriente(cuentaBuscada.getSaldoCuentaCorriente() -giro);
+                System.out.println("Dinero retirado con éxito");
+                System.out.println("Saldo actual: $" + cuentaBuscada.getSaldoCuentaCorriente() + " CLP");
             }
+        }else {
+            System.out.println("Rut invalido");
         }
     }
 
-    public static void  saldo(){
-        if(Administracion.listaCliente.size()==0){
-            System.out.println("Primero debes ser cliente de Bank Boston");
-        }else {
-            System.out.println("Saldo actual: $" + saldoCuentaCorriente + " CLP");
+    public void saldoCuenta(String rut){
+        if(Administracion.clienteRegistradoPorRut.containsKey(rut)){
+            System.out.println(Administracion.cuentaRegistadaPorRut.get(rut));
+        }else{
+            System.out.println("Rut invalido");
         }
     }
 
@@ -70,23 +80,11 @@ public class Cuenta {
         return (long) numeroAleatorio;
     }
 
-    public static void creacionCuentaCorriente(){
-        saldoCuentaCorriente=0;
-        numeroCuentaCorriente = numeroAleatorioCuentaCorriente() +110000000;
-
-        System.out.println("-------------------------");
-        System.out.println("Cuenta Corriente Creada");
-        System.out.println("Cuenta Corriente Nª: " + numeroCuentaCorriente);
-        System.out.println("Tu saldo actual es de: " + "$" + saldoCuentaCorriente + " CLP");
-        System.out.println("-------------------------");
-
-    }
-
     @Override
     public String toString() {
         return "-----------------------" + '\n' +
-                "Numero Cuenta Corriente: " + numeroCuentaCorriente+ '\n' +
-                "Saldo: $" + saldoCuentaCorriente + "CLP" + '\n' +
+                "Numero Cuenta Corriente: " + getNumeroCuentaCorriente()+ '\n' +
+                "Saldo: $" + getSaldoCuentaCorriente() + " CLP" + '\n' +
                 "-----------------------";
     }
 }
